@@ -1,10 +1,7 @@
 import { List, Divider, Anchor } from 'antd';
+import LocationComponent from '../LocationComponent'
 
-
-
-export default function LocationComponent() {
-    const { Link } = Anchor;
-
+export default function LocationListComponent() {
     const handleClick = (e, link) => {
         e.preventDefault();
         console.log(link);

@@ -1,6 +1,6 @@
 import { Button, DatePicker, Space } from 'antd';
 
-export default function DateInput() {
+export default function DateInput(props) {
 
     let date;
 
@@ -16,6 +16,8 @@ export default function DateInput() {
 
     function loadLocationList() {
         console.log(`Load location list at time ${date}`)
+        props.value(true)
+        props.date(date)
     }
     
     return (
