@@ -1,21 +1,28 @@
-import React from 'react';
+import { Button, DatePicker, Space } from 'antd';
 
-import {Button} from 'antd';
+export default function DateInput() {
 
-export default function DateInput(){
-    // const n
-    // for (var i)
+    let date;
 
-    const [count, setCount] = React.useState(0)
-    const clickButton = ()=>{
-        setCount(count + 1)
+    function onChange(value, dateString) {
+        console.log('Selected Time: ', value);
+        console.log('Formatted Selected Time: ', dateString);
+        date = dateString;
+      }
+      
+    function onOk(value) {
+        console.log('onOk: ', value);
+      }
+
+    function loadLocationList() {
+        console.log(`Load location list at time ${date}`)
     }
-
-
+    
     return (
-        <div> 
-            `I am the date input`, {count}
-            <Button onClick={clickButton} type='primary'>Click me </Button>
-        </div>
+        <Space direction="vertical" size={12}>  
+            <DatePicker showTime onChange={onChange} onOk={onOk} />
+            <Button onClick={loadLocationList}>Load locations</Button>
+        </Space>
     )
+    
 }
