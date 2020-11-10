@@ -1,27 +1,25 @@
-import './App.css';
-import React, { useState, useEffect } from 'react';
+import "./App.css";
+import React, { useState, useEffect } from "react";
 
-import DateInput from './components/DateInput';
-import LocationListComponent from './components/LocationListComponent';
+import DateInput from "./components/DateInput";
+import LocationListComponent from "./components/LocationListComponent";
 
 function App() {
+  const [date, setDate] = useState(null);
 
-  const [date, setDate] = useState(null)
-
-  useEffect(() => {
-  })
+  useEffect(() => {});
 
   function handleClick(value) {
-    setDate({date: value});
+    setDate(value);
   }
 
   return (
-  <div className="App">
-     <header className="App-header">
-      <DateInput value={handleClick} date={date}/>
-      { date ? <LocationListComponent date={date}/> : null }
-    </header>
-  </div>
+    <div className="App">
+      <header className="App-header">
+        <DateInput value={handleClick} />
+        {date ? <LocationListComponent date={date} /> : null}
+      </header>
+    </div>
   );
 }
 
