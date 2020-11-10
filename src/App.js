@@ -1,33 +1,25 @@
 import './App.css';
+import React, { useState, useEffect } from 'react';
 
 import DateInput from './components/DateInput';
 import LocationListComponent from './components/LocationListComponent';
 
 function App() {
 
-  const state = { dateInput: false, date: '' }
+  const [date, setDate] = useState(null)
 
-  function setState(props) {
-    const key = props.key
-    const value = props.value
-    state[key] = value
-  }
+  useEffect(() => {
+  })
 
   function handleClick(value) {
-    setState({dateInput: value});
-    console.log("Parent block updated")
-  }
-
-  function updateDate(date) {
-    setState({datetime: date});
-    console.log("Date in parent block updated")
+    setDate({date: value});
   }
 
   return (
   <div className="App">
      <header className="App-header">
-      <DateInput value={handleClick} date={updateDate}/>
-      <LocationListComponent/>
+      <DateInput value={handleClick} date={date}/>
+      { date ? <LocationListComponent date={date}/> : null }
     </header>
   </div>
   );

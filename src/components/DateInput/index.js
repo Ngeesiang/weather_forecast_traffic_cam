@@ -1,23 +1,29 @@
-import { Button, DatePicker, Space } from 'antd';
+import { Button, DatePicker, Space, message } from 'antd';
 
 export default function DateInput(props) {
 
-    let date;
+    let dateInput;
 
     function onChange(value, dateString) {
         console.log('Selected Time: ', value);
         console.log('Formatted Selected Time: ', dateString);
-        date = dateString;
+        dateInput = dateString;
       }
       
     function onOk(value) {
         console.log('onOk: ', value);
+        console.log("dateInput: " + dateInput)
       }
 
     function loadLocationList() {
-        console.log(`Load location list at time ${date}`)
-        props.value(true)
-        props.date(date)
+        if (dateInput == null) {
+            message.info('Please enter a date!');
+        }
+        else {
+            console.log(`Load location list at time: ${dateInput}`)
+            props.value(dateInput)
+            message.info('Location list loaded!');
+        }
     }
     
     return (

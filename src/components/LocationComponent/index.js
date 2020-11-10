@@ -5,12 +5,17 @@ export default function LocationComponent({location}) {
 
     const { Link } = Anchor;
 
+    const locationName = location
+
     return (
         <>
-        {/* <Link href="" title={location}>
-        </Link> */}
+        <Link href="" title="Press Me">
+        </Link>
         <div>
-            {location}
+            <body>
+                Latitude = {locationName.latitude}
+                Longitude = {locationName.longitude}
+            </body>
         </div>
         </>
     )
