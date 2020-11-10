@@ -1,18 +1,20 @@
 import { Anchor } from "antd";
 
-export default function LocationComponent({ location }) {
+export default function LocationComponent(props) {
   const { Link } = Anchor;
+  
+  console.log(props)
+  const input = props.item;
+  const area = props.area
+  const weather = props.weather
 
-  const locationName = location;
+  console.log(props.item)
 
   return (
     <>
-      <Link href="" title="Press Me"></Link>
       <div>
-        <body>
-          Latitude = {locationName.latitude}
-          Longitude = {locationName.longitude}
-        </body>
+        {/* <Link href="" title="">{inputName}</Link> */}
+        {input.camera_id} {area} {weather}
       </div>
     </>
   );

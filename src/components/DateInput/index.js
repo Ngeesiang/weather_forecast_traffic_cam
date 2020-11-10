@@ -1,12 +1,18 @@
 import { Button, DatePicker, Space, message } from "antd";
+import React from 'react';
 
 export default function DateInput(props) {
-  let dateInput;
+
+  const [ dateInput, setDateInput ] = React.useState(null);
+
+  React.useEffect(() => {
+
+  }, [dateInput])
 
   function onChange(value, dateString) {
     console.log("Selected Time: ", value);
     console.log("Formatted Selected Time: ", dateString);
-    dateInput = dateString;
+    setDateInput(dateString);
   }
 
   function onOk(value) {
@@ -15,7 +21,7 @@ export default function DateInput(props) {
   }
 
   function loadLocationList() {
-    if (dateInput == null) {
+    if (dateInput === null) {
       message.info("Please enter a date!");
     } else {
       console.log(`Load location list at time: ${dateInput}`);

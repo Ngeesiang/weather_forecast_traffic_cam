@@ -1,53 +1,70 @@
-import { List, Divider, Anchor } from "antd";
+import { List, Divider, Avatar } from "antd";
 import LocationComponent from "../LocationComponent";
 import moment from "moment";
 import "moment-timezone";
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { DownloadOutlined } from '@ant-design/icons'
+import { Spin } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
+
+
+function mapArea(latitudeInput, longitudeInput, geoCodingData) {
+  let area;
+  let diff = Number.MAX_SAFE_INTEGER
+  geoCodingData.forEach(element => {
+    const { latitude, longitude } = element.label_location
+    if ((Math.abs(latitudeInput-latitude) + Math.abs(longitudeInput-longitude)) < diff) {
+      diff = Math.abs(latitudeInput-latitude) + Math.abs(longitudeInput-longitude)
+      area = element.name
+    }
+  })
+  
+  return area
+}
+
+function mapWeather(area, weatherForecastData) {
+  for (var i=0; i < weatherForecastData.length; i++) {
+    if (weatherForecastData[i].area === area) {
+      return weatherForecastData[i].forecast
+    }
+  }
+}
+
 
 export default function LocationListComponent(props) {
   moment.tz.setDefault("Asia/Singapore");
   console.log("In LocationListComponent");
 
-  let data = [];
+  const [ cameraData, setCameraData ] = React.useState(null)
+  const [ geoCodingData, setGeoCoding ] = React.useState(null)
+  const [ weatherForecastData, setWeatherForecastData ] = React.useState(null)
+  const [ loadedState, setLoadedState ] = React.useState(false)
+  const [ data, setData ] = React.useState([])
 
-  const [cameraData, setCameraData] = useState(null);
-  const [geoCodingData, setGeoCodeData] = useState(null);
-  const [weatherForecastData, setWeatherForecastData] = useState(null);
-  const [isLoaded, setLoaded] = useState(false);
-
-  useEffect(() => {
-    console.log("Use effect");
-    if (isLoaded === false) {
-      const dateInput = moment(props.date).format("YYYY-MM-DD[T]HH:mm:ss");
-      console.log(dateInput);
+  React.useEffect(() => {
       console.log("Preparing to retrieve info");
-      Promise.all([
-        retrieveCameraInfo(dateInput),
-        retrieveGeocodingInfo(dateInput),
-      ]).then(() => {
-        setLoaded({
-          isLoaded: true,
-        });
-        console.log("Retrieving Info");
-      });
-    } else {
-      console.log("Info retrieved");
-      console.log("cameraData: ");
-      console.log(cameraData);
-      console.log("geoCodingData: ");
-      console.log(geoCodingData);
-      console.log("weatherForeCastData: ");
-      console.log(weatherForecastData);
-    }
-  });
+      async function fetchData() {
+        const cam = await retrieveCameraInfo(moment(props.date).format("YYYY-MM-DD[T]HH:mm:ss"))
+        setCameraData(cam)
+        console.log(cam)
+        const [meta, fc] = await retrieveGeocodingInfo(moment(props.date).format("YYYY-MM-DD[T]HH:mm:ss"))
+        setGeoCoding(meta)
+        setWeatherForecastData(fc)
+        console.log(meta)
+        console.log(fc)
+        console.log("Info retrieved")
+        setLoadedState(true)
+      }
+      fetchData()
+    }, [loadedState]);
 
   const handleClick = (e, link) => {
     e.preventDefault();
     console.log(link);
   };
 
-  function retrieveCameraInfo(date) {
-    fetch(
+ async function retrieveCameraInfo(date) {
+   return await fetch(
       `https://api.data.gov.sg/v1/transport/traffic-images?date_time=${date}`,
       {
         method: "GET",
@@ -58,7 +75,7 @@ export default function LocationListComponent(props) {
         (result) => {
           console.log("Camera results");
           console.log(result);
-          setCameraData(result.items[0].cameras);
+          return result.items[0].cameras
         },
         (error) => {
           console.log("Error in retrieveCameraInfo");
@@ -66,8 +83,8 @@ export default function LocationListComponent(props) {
       );
   }
 
-  function retrieveGeocodingInfo(date) {
-    fetch(
+ async function retrieveGeocodingInfo(date) {
+     return await fetch(
       `https://api.data.gov.sg/v1/environment/2-hour-weather-forecast?date_time=${date}`,
       {
         method: "GET",
@@ -76,10 +93,13 @@ export default function LocationListComponent(props) {
       .then((res) => res.json())
       .then(
         (result) => {
-          console.log("Geocoding results");
-          console.log(result);
-          setGeoCodeData(result.area_metadata);
-          setWeatherForecastData(result.items[0].forecasts);
+          // console.log("Geocoding results");
+          // console.log(result);
+          const metadata = result.area_metadata
+          const forecast = result.items[0].forecasts
+          setGeoCoding(metadata)
+          setWeatherForecastData(forecast)
+          return [metadata, forecast]
         },
         (error) => {
           console.log("Error in retrieveGeoCodingInfo");
@@ -87,53 +107,36 @@ export default function LocationListComponent(props) {
       );
   }
 
-  function mapArea(latitudeInput, longitudeInput) {
-    let area;
-    let diff = Number.MAX_SAFE_INTEGER
-    geoCodingData.forEach(element => {
-      const { latitude, longitude } = element.label_location
-      if ((Math.abs(latitudeInput-latitude) + Math.abs(longitudeInput-longitude)) < diff) {
-        diff = Math.abs(latitudeInput-latitude) + Math.abs(longitudeInput-longitude)
-        area = element.name
-      }
-    })
-    return area
-  }
-
-  function reverseGeoCoding() {
-
-    for (var i = 0; i < cameraData.length; i++) {
-      let lat = cameraData[i].location.latitude;
-      let long = cameraData[i].location.longitude;
-      for (var j = 0; j < geoCodingData.length; j++) {
-        let label_location_lat = geoCodingData[j].label_location.latitude;
-        let label_location_long = geoCodingData[j].label_location.longitude;
-      }
-      data.append({
-        'area': mapArea(latitudeInput, longitudeInput),
-
-      });
-    }
-  }
+  const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
   return (
     <>
+      <Divider>Locations</Divider>
+        { loadedState ? null : <Spin indicator={antIcon} /> }
+        { loadedState ? 
+        <List
+          className="LocationListComponent-List"
+          itemLayout="horizontal"
+          size="large"
+          pagination={{
+            onChange: page => {
+              console.log(page);
+            },
+            pageSize: 10,
+          }}
+          dataSource={cameraData}
+          renderItem={item => (
+            <List.Item>
+              <List.Item.Meta
+                avatar={<Avatar src="/cctv.jpg" />}
+                title={<a href={item.image}>Camera{item.camera_id}</a>}
+                description={mapArea(item.location.latitude, item.location.longitude, geoCodingData)} 
+              />
+              <DownloadOutlined twoToneColor="#eb2f96"/>
+            </List.Item>
+          )}
+        /> : null }
       <Divider></Divider>
-      <Divider orientation="center">List of Locations</Divider>
-      <Anchor affix={false} onClick={handleClick}>
-        {data ? (
-          <List
-            size="large"
-            bordered
-            dataSource={data}
-            renderItem={(item) => (
-              <List.Item>
-                <LocationComponent location={item.location} />
-              </List.Item>
-            )}
-          />
-        ) : null}
-      </Anchor>
     </>
   );
 }
