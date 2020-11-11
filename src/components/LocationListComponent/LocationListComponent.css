@@ -1,6 +1,9 @@
-
-
 .LocationListComponent-List {
-    text-align: left;
-    align-items: left;
+  text-align: left;
+  align-items: left;
+  cursor: pointer;
+}
+
+.ListItem {
+  cursor: pointer;
 }

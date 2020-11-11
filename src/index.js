@@ -4,18 +4,17 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { Layout } from "antd";
-import { EyeOutlined } from '@ant-design/icons'
-
+import { EyeOutlined } from "@ant-design/icons";
 
 const { Header, Content } = Layout;
 
 ReactDOM.render(
   <React.StrictMode>
     <Layout>
-      <Header className="header">SpyC
+      <Header className="header">
+        SpyC
         <EyeOutlined />m
       </Header>
-      
       <Layout>
         <Content>
           <App />

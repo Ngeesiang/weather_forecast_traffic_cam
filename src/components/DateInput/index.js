@@ -1,13 +1,10 @@
 import { Button, DatePicker, Space, message } from "antd";
-import React from 'react';
+import React from "react";
 
 export default function DateInput(props) {
+  const [dateInput, setDateInput] = React.useState(null);
 
-  const [ dateInput, setDateInput ] = React.useState(null);
-
-  React.useEffect(() => {
-
-  }, [dateInput])
+  React.useEffect(() => {}, [dateInput]);
 
   function onChange(value, dateString) {
     console.log("Selected Time: ", value);
