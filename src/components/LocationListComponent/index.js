@@ -1,4 +1,4 @@
-import { Divider, Table } from "antd";
+import { Divider, message, Table, Space, Button } from "antd";
 import moment from "moment";
 import "moment-timezone";
 import React from "react";
@@ -46,12 +46,16 @@ const columns = [
   },
   {
     title: "Image Download",
-    dataIndex: <DownloadOutlined />,
     key: "image-url",
-    render: (image) => {
-      <DownloadOutlined href={image} />;
-    },
-  },
+    render: (record) => (
+      <div className="space-align-container">
+        <Space size="middle">
+          <Button icon={<DownloadOutlined />} href={record.image}>Click to download</Button>
+        </Space>
+      </div>
+      
+    )
+  }
 ];
 
 export default function LocationListComponent(props) {
@@ -74,17 +78,18 @@ export default function LocationListComponent(props) {
       );
       cam.map((e, index) => {
         const area = mapArea(e.location.latitude, e.location.longitude, meta);
+        e.timestamp = moment(e.timestamp).format(("dddd, MMMM Do YYYY, h:mm:ss a"))
         e.location = area;
         e.weather = mapWeather(area, fc);
         e.key = index + 1;
       });
-      console.log(cam);
       setCameraData(cam);
       setGeoCoding(meta);
       setWeatherForecastData(fc);
-      console.log(meta);
-      console.log(fc);
       console.log("Info retrieved");
+      if (loadedState && (cam.length===0|| meta.length===0 || fc.length===0)) {
+        message.error("Time period chosen has no data available")
+      }
       setLoadedState(true);
     }
     fetchData();
@@ -98,9 +103,11 @@ export default function LocationListComponent(props) {
       }
     )
       .then((res) => res.json())
-      .then((result) => {
-        console.log(result.items[0].cameras);
-        return result.items[0].cameras;
+      .then(({items}) => {
+        console.log('camera')
+        console.log(items)
+        if (items[0].cameras ===undefined) return []
+        return items[0].cameras;
       })
       .catch((error) => {
         console.log("Error in retrieveCameraInfo: " + error);
@@ -116,10 +123,11 @@ export default function LocationListComponent(props) {
     )
       .then((res) => res.json())
       .then((result) => {
+        console.log('geocoding')
+        console.log(result)
+        if (result.area_metadata === 0) return [[], []]
         const metadata = result.area_metadata;
         const forecast = result.items[0].forecasts;
-        console.log(metadata);
-        console.log(forecast);
         setGeoCoding(metadata);
         setWeatherForecastData(forecast);
         return [metadata, forecast];

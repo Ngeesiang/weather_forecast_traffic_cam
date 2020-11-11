@@ -23,7 +23,6 @@ export default function DateInput(props) {
     } else {
       console.log(`Load location list at time: ${dateInput}`);
       props.value(dateInput);
-      message.info("Location list loaded!");
     }
   }
 

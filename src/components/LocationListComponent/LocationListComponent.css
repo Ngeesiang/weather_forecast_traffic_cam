@@ -7,3 +7,9 @@
 .ListItem {
   cursor: pointer;
 }
+
+.space-align-container {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
