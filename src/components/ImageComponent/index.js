@@ -4,7 +4,7 @@ const { Meta } = Card;
 
 export default function ImageComponent(props) {
   const input = props.item;
-  const title = input.location + "  (" + input.timestamp + ")"
+  const title = input.location + "  (" + input.timestamp + ")";
 
   return (
     <>

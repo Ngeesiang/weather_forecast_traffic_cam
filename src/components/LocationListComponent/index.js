@@ -40,7 +40,7 @@ export default function LocationListComponent(props) {
   const [geoCodingData, setGeoCoding] = React.useState(null);
   const [weatherForecastData, setWeatherForecastData] = React.useState(null);
   const [loadedState, setLoadedState] = React.useState(false);
-  const [filters, setFilters] = React.useState([])
+  const [filters, setFilters] = React.useState([]);
 
   React.useEffect(() => {
     console.log("Preparing to retrieve info");
@@ -53,7 +53,9 @@ export default function LocationListComponent(props) {
       );
       cam.map((e, index) => {
         const area = mapArea(e.location.latitude, e.location.longitude, meta);
-        e.timestamp = moment(e.timestamp).format(("dddd, MMMM Do YYYY, h:mm:ss a"))
+        e.timestamp = moment(e.timestamp).format(
+          "dddd, MMMM Do YYYY, h:mm:ss a"
+        );
         e.location = area;
         e.weather = mapWeather(area, fc);
         e.key = index + 1;
@@ -65,19 +67,23 @@ export default function LocationListComponent(props) {
       setLoadedState(true);
     }
     fetchData();
-    if (loadedState && (cameraData.length===0|| geoCodingData.length===0 || weatherForecastData.length===0)) {
-      message.error("Time period chosen has no data available")
-    }
-    else if (loadedState) {
+    if (
+      loadedState &&
+      (cameraData.length === 0 ||
+        geoCodingData.length === 0 ||
+        weatherForecastData.length === 0)
+    ) {
+      message.error("Time period chosen has no data available");
+    } else if (loadedState) {
       let filter = [];
-      geoCodingData.forEach(element => {
+      geoCodingData.forEach((element) => {
         const filterValue = {
           text: element.name,
-          value: element.name
-        }
-        filter.push(filterValue)
-      })
-      setFilters(filter)
+          value: element.name,
+        };
+        filter.push(filterValue);
+      });
+      setFilters(filter);
     }
   }, [loadedState]);
 
@@ -89,10 +95,10 @@ export default function LocationListComponent(props) {
       }
     )
       .then((res) => res.json())
-      .then(({items}) => {
-        console.log('camera')
-        console.log(items)
-        if (items[0].cameras ===undefined) return []
+      .then(({ items }) => {
+        console.log("camera");
+        console.log(items);
+        if (items[0].cameras === undefined) return [];
         return items[0].cameras;
       })
       .catch((error) => {
@@ -109,9 +115,9 @@ export default function LocationListComponent(props) {
     )
       .then((res) => res.json())
       .then((result) => {
-        console.log('geocoding')
-        console.log(result)
-        if (result.area_metadata === 0) return [[], []]
+        console.log("geocoding");
+        console.log(result);
+        if (result.area_metadata === 0) return [[], []];
         const metadata = result.area_metadata;
         const forecast = result.items[0].forecasts;
         setGeoCoding(metadata);
@@ -144,12 +150,13 @@ export default function LocationListComponent(props) {
       render: (record) => (
         <div className="space-align-container">
           <Space size="middle">
-            <Button icon={<DownloadOutlined />} href={record.image}>Click to download</Button>
+            <Button icon={<DownloadOutlined />} href={record.image}>
+              Click to download
+            </Button>
           </Space>
         </div>
-        
-      )
-    }
+      ),
+    },
   ];
 
   const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
