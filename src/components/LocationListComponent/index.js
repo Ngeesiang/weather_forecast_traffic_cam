@@ -31,32 +31,6 @@ function mapWeather(area, weatherForecastData) {
     }
   }
 }
-const columns = [
-  {
-    title: "CameraId",
-    dataIndex: "camera_id",
-    defaultSortOrder: "ascend",
-    sorter: (a, b) => a.camera_id - b.camera_id,
-  },
-  {
-    title: "Area",
-    dataIndex: "location",
-    defaultSortOrder: "ascend",
-    sorter: (a, b) => a.location.localeCompare(b.location),
-  },
-  {
-    title: "Image Download",
-    key: "image-url",
-    render: (record) => (
-      <div className="space-align-container">
-        <Space size="middle">
-          <Button icon={<DownloadOutlined />} href={record.image}>Click to download</Button>
-        </Space>
-      </div>
-      
-    )
-  }
-];
 
 export default function LocationListComponent(props) {
   moment.tz.setDefault("Asia/Singapore");
@@ -66,6 +40,7 @@ export default function LocationListComponent(props) {
   const [geoCodingData, setGeoCoding] = React.useState(null);
   const [weatherForecastData, setWeatherForecastData] = React.useState(null);
   const [loadedState, setLoadedState] = React.useState(false);
+  const [filters, setFilters] = React.useState([])
 
   React.useEffect(() => {
     console.log("Preparing to retrieve info");
@@ -87,12 +62,23 @@ export default function LocationListComponent(props) {
       setGeoCoding(meta);
       setWeatherForecastData(fc);
       console.log("Info retrieved");
-      if (loadedState && (cam.length===0|| meta.length===0 || fc.length===0)) {
-        message.error("Time period chosen has no data available")
-      }
       setLoadedState(true);
     }
     fetchData();
+    if (loadedState && (cameraData.length===0|| geoCodingData.length===0 || weatherForecastData.length===0)) {
+      message.error("Time period chosen has no data available")
+    }
+    else if (loadedState) {
+      let filter = [];
+      geoCodingData.forEach(element => {
+        const filterValue = {
+          text: element.name,
+          value: element.name
+        }
+        filter.push(filterValue)
+      })
+      setFilters(filter)
+    }
   }, [loadedState]);
 
   async function retrieveCameraInfo(date) {
@@ -136,6 +122,35 @@ export default function LocationListComponent(props) {
         console.log("Error in retrieveCameraInfo: " + error);
       });
   }
+
+  const columns = [
+    {
+      title: "CameraId",
+      dataIndex: "camera_id",
+      defaultSortOrder: "ascend",
+      sorter: (a, b) => a.camera_id - b.camera_id,
+    },
+    {
+      title: "Area",
+      dataIndex: "location",
+      defaultSortOrder: "ascend",
+      sorter: (a, b) => a.location.localeCompare(b.location),
+      filters: filters,
+      onFilter: (value, record) => record.location === value,
+    },
+    {
+      title: "Image Download",
+      key: "image-url",
+      render: (record) => (
+        <div className="space-align-container">
+          <Space size="middle">
+            <Button icon={<DownloadOutlined />} href={record.image}>Click to download</Button>
+          </Space>
+        </div>
+        
+      )
+    }
+  ];
 
   const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
