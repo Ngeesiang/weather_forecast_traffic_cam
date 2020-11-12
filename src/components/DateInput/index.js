@@ -7,28 +7,28 @@ export default function DateInput(props) {
   React.useEffect(() => {}, [dateInput]);
 
   function onChange(value, dateString) {
-    console.log("Selected Time: ", value);
-    console.log("Formatted Selected Time: ", dateString);
     setDateInput(dateString);
   }
 
-  function onOk(value) {
-    console.log("onOk: ", value);
-    console.log("dateInput: " + dateInput);
-  }
+  function onOk(value) {}
 
   function loadLocationList() {
     if (dateInput === null) {
       message.info("Please enter a date!");
     } else {
-      console.log(`Load location list at time: ${dateInput}`);
       props.value(dateInput);
     }
   }
 
   return (
     <Space direction="vertical" size={12}>
-      <DatePicker showTime onChange={onChange} onOk={onOk} />
+      <DatePicker
+        className="DatePicker"
+        showTime
+        onChange={onChange}
+        onOk={onOk}
+        placeholderText="Choose a date"
+      />
       <Button onClick={loadLocationList}>Load locations</Button>
     </Space>
   );

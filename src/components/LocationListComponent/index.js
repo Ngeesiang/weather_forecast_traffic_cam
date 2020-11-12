@@ -34,16 +34,15 @@ function mapWeather(area, weatherForecastData) {
 
 export default function LocationListComponent(props) {
   moment.tz.setDefault("Asia/Singapore");
-  console.log("In LocationListComponent");
 
   const [cameraData, setCameraData] = React.useState(null);
   const [geoCodingData, setGeoCoding] = React.useState(null);
   const [weatherForecastData, setWeatherForecastData] = React.useState(null);
   const [loadedState, setLoadedState] = React.useState(false);
   const [filters, setFilters] = React.useState([]);
+  const width = props.width;
 
   React.useEffect(() => {
-    console.log("Preparing to retrieve info");
     async function fetchData() {
       const cam = await retrieveCameraInfo(
         moment(props.date).format("YYYY-MM-DD[T]HH:mm:ss")
@@ -63,7 +62,6 @@ export default function LocationListComponent(props) {
       setCameraData(cam);
       setGeoCoding(meta);
       setWeatherForecastData(fc);
-      console.log("Info retrieved");
       setLoadedState(true);
     }
     fetchData();
@@ -96,13 +94,11 @@ export default function LocationListComponent(props) {
     )
       .then((res) => res.json())
       .then(({ items }) => {
-        console.log("camera");
-        console.log(items);
         if (items[0].cameras === undefined) return [];
         return items[0].cameras;
       })
       .catch((error) => {
-        console.log("Error in retrieveCameraInfo: " + error);
+        throw new Error("Error in retrieveCameraInfo");
       });
   }
 
@@ -115,8 +111,6 @@ export default function LocationListComponent(props) {
     )
       .then((res) => res.json())
       .then((result) => {
-        console.log("geocoding");
-        console.log(result);
         if (result.area_metadata === 0) return [[], []];
         const metadata = result.area_metadata;
         const forecast = result.items[0].forecasts;
@@ -125,7 +119,7 @@ export default function LocationListComponent(props) {
         return [metadata, forecast];
       })
       .catch((error) => {
-        console.log("Error in retrieveCameraInfo: " + error);
+        throw new Error("Error in retrieveGeocodingInfo");
       });
   }
 
@@ -134,27 +128,31 @@ export default function LocationListComponent(props) {
       title: "CameraId",
       dataIndex: "camera_id",
       defaultSortOrder: "ascend",
+      align: "center",
       sorter: (a, b) => a.camera_id - b.camera_id,
     },
     {
       title: "Area",
       dataIndex: "location",
       defaultSortOrder: "ascend",
+      align: "center",
       sorter: (a, b) => a.location.localeCompare(b.location),
       filters: filters,
       onFilter: (value, record) => record.location === value,
     },
     {
-      title: "Image Download",
+      title: "Download",
       key: "image-url",
+      align: "center",
+      justify: "space-around",
       render: (record) => (
-        <div className="space-align-container">
-          <Space size="middle">
-            <Button icon={<DownloadOutlined />} href={record.image}>
-              Click to download
-            </Button>
-          </Space>
-        </div>
+        <Space className="space-align-container">
+          <Button
+            align="center"
+            icon={<DownloadOutlined />}
+            href={record.image}
+          />
+        </Space>
       ),
     },
   ];
@@ -166,10 +164,19 @@ export default function LocationListComponent(props) {
       <Divider>Locations</Divider>
       {loadedState ? null : <Spin indicator={antIcon} />}
       <Table
+        justify="space-around"
+        align="middle"
         className="components-table-demo-nested"
+        width={width}
         columns={columns}
         expandable={{
-          expandedRowRender: (record) => <ImageComponent item={record} />,
+          expandedRowRender: (record) => (
+            <ImageComponent
+              className="Location-ImageComponent"
+              item={record}
+              width={width}
+            />
+          ),
         }}
         dataSource={cameraData}
       />

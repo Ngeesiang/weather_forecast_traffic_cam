@@ -3,30 +3,36 @@ import React from "react";
 
 import DateInput from "./components/DateInput";
 import LocationListComponent from "./components/LocationListComponent";
+import Layout, { Content } from "antd/lib/layout/layout";
+import { Divider } from "antd";
 
-function App() {
+function App(props) {
   const [date, setDate] = React.useState(null);
+  const [appWidth, setAppWidth] = React.useState(props.width);
 
   React.useEffect(() => {}, [date]);
 
+  const width = props.width;
+
   function handleClick(value) {
     setDate(value);
-    console.log(value);
-    console.log("App.date updated, Render LocationListComponent");
   }
 
   return (
     <div className="App">
-      <header className="App-header">
-        <DateInput value={handleClick} />
-        {date ? (
-          <LocationListComponent
-            className="ListComponent"
-            date={date}
-            key={date}
-          />
-        ) : null}
-      </header>
+      <Layout>
+        <Content className="App-content">
+          <DateInput value={handleClick} />
+          {date ? (
+            <LocationListComponent
+              className="ListComponent"
+              date={date}
+              width={width}
+              key={date}
+            />
+          ) : null}
+        </Content>
+      </Layout>
     </div>
   );
 }

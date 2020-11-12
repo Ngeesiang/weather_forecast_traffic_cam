@@ -8,16 +8,18 @@ import { EyeOutlined } from "@ant-design/icons";
 
 const { Header, Content } = Layout;
 
+const { innerWidth: width, innerHeight: height } = window;
+
 ReactDOM.render(
   <React.StrictMode>
     <Layout>
-      <Header className="header">
+      <Header className="header" style={{ zIndex: 1, width: "100%" }}>
         SpyC
         <EyeOutlined />m
       </Header>
       <Layout>
         <Content>
-          <App />
+          <App width={width} />
         </Content>
       </Layout>
     </Layout>
