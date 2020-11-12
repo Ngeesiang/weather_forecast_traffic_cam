@@ -4,7 +4,6 @@ import React from "react";
 import DateInput from "./components/DateInput";
 import LocationListComponent from "./components/LocationListComponent";
 import Layout, { Content } from "antd/lib/layout/layout";
-import { Divider } from "antd";
 
 function App(props) {
   const [date, setDate] = React.useState(null);
