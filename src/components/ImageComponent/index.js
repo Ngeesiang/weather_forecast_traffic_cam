@@ -16,8 +16,7 @@ export default function ImageComponent(props) {
         className="ImageComponent-Card"
         hoverable
         style={{ width: { width } }}
-        loading={true}
-        cover={<Image width={width} alt="image" src={input.image} />}
+        cover={<Image placeholder="Image loading" width={width} alt="image" src={input.image} />}
       >
         <Meta title={title} description={description} />
       </Card>

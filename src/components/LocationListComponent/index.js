@@ -40,7 +40,7 @@ export default function LocationListComponent(props) {
   const [weatherForecastData, setWeatherForecastData] = React.useState(null);
   const [loadedState, setLoadedState] = React.useState(false);
   const [filters, setFilters] = React.useState([]);
-  const width = props.width;
+  const width = props.width
 
   React.useEffect(() => {
     async function fetchData() {
@@ -119,7 +119,7 @@ export default function LocationListComponent(props) {
         return [metadata, forecast];
       })
       .catch((error) => {
-        throw new Error("Error in retrieveGeocodingInfo");
+        throw new Error("Error in retrieveCameraInfo");
       });
   }
 
@@ -146,13 +146,9 @@ export default function LocationListComponent(props) {
       align: "center",
       justify: "space-around",
       render: (record) => (
-        <Space className="space-align-container">
-          <Button
-            align="center"
-            icon={<DownloadOutlined />}
-            href={record.image}
-          />
-        </Space>
+          <Space className="space-align-container">
+            <Button align="center" icon={<DownloadOutlined />} href={record.image}/>
+          </Space>
       ),
     },
   ];
@@ -164,19 +160,13 @@ export default function LocationListComponent(props) {
       <Divider>Locations</Divider>
       {loadedState ? null : <Spin indicator={antIcon} />}
       <Table
-        justify="space-around"
+        justify="space-around" 
         align="middle"
         className="components-table-demo-nested"
         width={width}
         columns={columns}
         expandable={{
-          expandedRowRender: (record) => (
-            <ImageComponent
-              className="Location-ImageComponent"
-              item={record}
-              width={width}
-            />
-          ),
+          expandedRowRender: (record) => <ImageComponent className="Location-ImageComponent" item={record} width={width}/>,
         }}
         dataSource={cameraData}
       />
